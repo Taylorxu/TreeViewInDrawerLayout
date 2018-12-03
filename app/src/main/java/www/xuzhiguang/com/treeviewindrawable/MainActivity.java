@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,12 +86,17 @@ public class MainActivity extends AppCompatActivity {
             viewHolder.rootLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //根节点点击时，子节点listView 显示或隐藏
+                    //根节点点击时图标，子节点listView 显示或隐藏
                     if (data.get(i).getChildren() != null && data.get(i).getChildren().size() > 0) {
                         viewHolder.childListView.setVisibility(viewHolder.childListView.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-                    } else {
-                        Toast.makeText(getBaseContext(), "没有下一级菜单", Toast.LENGTH_SHORT).show();
                     }
+                }
+            });
+            //节点点击时，显示相关数据
+            viewHolder.floderFile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getBaseContext(), data.get(i).getName(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -102,13 +109,19 @@ public class MainActivity extends AppCompatActivity {
         class MyViewHolder extends RecyclerView.ViewHolder {
             private TextView textView;
             RecyclerView childListView;
-            FrameLayout rootLayout;
+            LinearLayout rootLayout;
+            ImageView folderFileView;
+            ImageView triangleView;
+            FrameLayout floderFile;
 
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
                 textView = (TextView) itemView.findViewById(R.id.item_text);
                 childListView = (RecyclerView) itemView.findViewById(R.id.left_tree_item_child_list);
                 rootLayout = itemView.findViewById(R.id.left_tree_item_root);
+                triangleView = itemView.findViewById(R.id.triangle_iv);
+                folderFileView = itemView.findViewById(R.id.folder_file_iv);
+                floderFile = itemView.findViewById(R.id.item_name_fl);
 
             }
 
@@ -116,8 +129,13 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText(treeData.getName());
                 List<LeftTreeDataBean> childData = treeData.getChildren();
                 if (childData != null && childData.size() > 0) {
+                    folderFileView.setBackgroundResource(R.mipmap.folder);
+                    triangleView.setVisibility(View.VISIBLE);
                     childListView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
                     childListView.setAdapter(new LeftTreeListAdapter(childData));
+                } else {
+                    folderFileView.setBackgroundResource(R.mipmap.file);
+                    triangleView.setVisibility(View.GONE);
                 }
             }
         }
