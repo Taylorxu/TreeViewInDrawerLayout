@@ -13,6 +13,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     //根节点点击时图标，子节点listView 显示或隐藏
                     if (data.get(i).getChildren() != null && data.get(i).getChildren().size() > 0) {
+                        triAngleRotate(viewHolder.childListView.getVisibility() == View.GONE, viewHolder.triangleView);
                         viewHolder.childListView.setVisibility(viewHolder.childListView.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+
                     }
                 }
             });
@@ -138,6 +144,22 @@ public class MainActivity extends AppCompatActivity {
                     triangleView.setVisibility(View.GONE);
                 }
             }
+        }
+
+
+        public void triAngleRotate(boolean r, ImageView view) {
+            if (r) {
+                Animation animation_open = AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotate_open);
+                animation_open.setFillAfter(true);
+                animation_open.setInterpolator(new AnticipateOvershootInterpolator());
+                view.startAnimation(animation_open);
+            } else {
+                Animation animation_open = AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotate_close);
+                animation_open.setFillAfter(true);
+                animation_open.setInterpolator(new AnticipateOvershootInterpolator());
+                view.startAnimation(animation_open);
+            }
+
         }
     }
 
