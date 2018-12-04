@@ -26,9 +26,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import www.xuzhiguang.com.treeviewindrawable.dummy.DummyContent;
+
+import static www.xuzhiguang.com.treeviewindrawable.RightContentItemFragment.ARG_CONFIG_CODE;
+
+public class MainActivity extends AppCompatActivity implements RightContentItemFragment.OnListFragmentInteractionListener {
     private RecyclerView leftTreeListView;
     private List<LeftTreeDataBean> leftTreeData;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createLeftTreeData() {
+        //todo 获取到数据后，将第一条的配置code 传给fragment
+        replaceOrAddFragment("100");
         leftTreeData = new ArrayList<>();
         List<LeftTreeDataBean> childrenList;
         for (int i = 0; i < 3; i++) {
@@ -66,6 +73,25 @@ public class MainActivity extends AppCompatActivity {
             leftTreeData.add(dataBean);
         }
         Log.e("XZG", leftTreeData.toString());
+    }
+
+    /**
+     * @param code 第一个配置的或者 选中的配置的code
+     */
+    public void replaceOrAddFragment(String code) {
+        RightContentItemFragment rightListFragment = new RightContentItemFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(ARG_CONFIG_CODE, code);
+        rightListFragment.setArguments(arguments);
+        this.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.right_list_fragment, rightListFragment)
+                .commit();
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+        //todo 跳转到详情
+        Log.e("", "");
     }
 
 
@@ -103,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getBaseContext(), data.get(i).getName(), Toast.LENGTH_SHORT).show();
+                    replaceOrAddFragment(data.get(i).getCode() + "");
+                    // 选完后 关闭drawaable
+                    if (drawer.isDrawerOpen(GravityCompat.START)) {
+                        drawer.closeDrawer(GravityCompat.START);
+                    }
                 }
             });
         }
